@@ -1,0 +1,40 @@
+version: "3.9"
+
+########################### ENVIRONMENT
+# Docker Hosts:
+# - Media / Database Server (dumds) - Custom intel pc with Ubuntu Server 22.04
+# - DNS / AdBlock Server (dns) - Raspberry Pi 4B with Raspberry Pi OS
+########################### THIS COMPOSE FILE
+# - Docker version 24.0.7, build afdd53b
+# - Docker Compose version v2.21.0
+
+networks:
+  default:
+    driver: bridge
+  socket_proxy:
+    name: socket_proxy
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.92.0/24
+
+  ########################### SECRETS
+secrets:
+  plex_claim:
+    file: $DOCKERDIR/secrets/plex_claim
+
+include:
+  ########################### SERVICES
+
+  # CORE
+  - compose/$HOSTNAME/socket-proxy.yml
+  - compose/$HOSTNAME/portainer.yml
+  - compose/$HOSTNAME/dozzle.yml
+  - compose/$HOSTNAME/homepage.yml
+  - compose/$HOSTNAME/filebrowser.yml
+
+  #MEDIA
+  - compose/$HOSTNAME/plex.yml
+
+  #MAINTENANCE
+  - compose/$HOSTNAME/docker-gc.yml

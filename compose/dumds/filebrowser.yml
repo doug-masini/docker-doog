@@ -1,0 +1,23 @@
+services:
+  # File Browser - Explorer
+  filebrowser:
+    image: filebrowser/filebrowser:s6
+    container_name: filebrowser
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    # profiles: ["apps", "all"]
+    networks:
+      - socket_proxy
+    ports:
+      - "81:80"
+    volumes:
+      - $USERDIR:/userfolder
+      - $DATADIR:/userfolder/data
+      - $DOCKERDIR/appdata/filebrowser/filebrowser.db:/database/filebrowser.db
+      - $DOCKERDIR/appdata/filebrowser/settings.json:/config/settings.json
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      DOCKER_HOST: tcp://socket-proxy:2375
