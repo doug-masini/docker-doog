@@ -13,14 +13,30 @@
              addresses: [8.8.8.8,8.8.8.4]
   ## Then Try
     sudo netplan try
-  Reboot the system to apply changes
+    sudo netplan apply 
+    Reboot the system if needed to apply changes
   # SSH configuration
   ## You can set several options in /etc/ssh/sshd_config. One is the listen address. If You set a listen address on your subnet. A private IP address is not routable over the internet.
     ListenAddress 192.168.0.10
   ## You can use the AllowUsers
     AllowUsers you@192.168.0.0/16
-  ## You can also change the port
+  ## You should change the port from the default
     Port 1234
+  ## Match blocks can be used for specific users and addresses
+    PasswordAuthentication no   #
+    PubkeyAuthentication no     # to disable access for all other users
+    Match Address 192.168.1.0/24
+            PermitRootLogin yes
+            PasswordAuthentication yes
+            PubkeyAuthentication yes
+    
+    Match User vpnuser Address 10.10.10.0/24
+            PasswordAuthentication yes
+            PubkeyAuthentication yes
+            
+    Match User outsideUser Address *
+            PasswordAuthentication no
+            PubkeyAuthentication yes
 
 # Installing Docker
   ## Add Docker's official GPG key:
@@ -53,7 +69,7 @@
     PUID=1000
     PGID=1000
     TZ="America/New_York"
-    USERDIR="/home/anand"
+    USERDIR="/home/dumds"
     DOCKERDIR="/home/{userName}/docker"
     DATADIR="/media/storage"
     HOSTNAME="dumds"
@@ -61,10 +77,10 @@
     sudo chmod 775 /home/{userName}/docker
 ## May need to set permissions with acl
     sudo apt install acl
-    sudo setfacl -Rdm u:{userName}:rwx /home/anand/docker
-    sudo setfacl -Rm u:{userName}:rwx /home/anand/docker
-    sudo setfacl -Rdm g:docker:rwx /home/anand/docker
-    sudo setfacl -Rm g:docker:rwx /home/anand/docker
+    sudo setfacl -Rdm u:{userName}:rwx /home/dumds/docker
+    sudo setfacl -Rm u:{userName}:rwx /home/dumds/docker
+    sudo setfacl -Rdm g:docker:rwx /home/dumds/docker
+    sudo setfacl -Rm g:docker:rwx /home/dumds/docker
   
 # Creating a Raid5 disk
     lsblk -o NAME,SIZE,FSTYPE,TYPE,MOUNTPOINT
@@ -87,11 +103,11 @@
 ## Check status for docker containers
     sudo docker ps -a
 ## Run Docker Compose to build the containers
-    sudo docker compose -f /home/bauldur/docker/docker-compose-dumds.yml -d
+    sudo docker compose -f /home/bauldur/docker/docker-compose-dumds.yml up -d
 
 ## To Update Images Run
     sudo docker compose -f /home/bauldur/docker/docker-compose-dumds.yml pull
     sudo docker compose -f /home/bauldur/docker/docker-compose-dumds.yml down
-    sudo docker compose -f /home/bauldur/docker/docker-compose-dumds.yml up
+    sudo docker compose -f /home/bauldur/docker/docker-compose-dumds.yml up -d
 ## Check Timezone
     ls -l /etc/localtime
