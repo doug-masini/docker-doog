@@ -9,7 +9,6 @@ services:
     # profiles: ["apps", "all"]
     networks:
       - socket_proxy
-      - default
     ports:
       - "8082:8080"
     environment:

@@ -1,5 +1,3 @@
-version: "3.9"
-
 ########################### ENVIRONMENT
 # Docker Hosts:
 # - Media / Database Server (dumds) - Custom intel pc with Ubuntu Server 22.04
