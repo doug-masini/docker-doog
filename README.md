@@ -1,5 +1,4 @@
 # Static IP Setup
-    /etc/network/interfaces.d/eth0
 # Modify /etc/netplan/01-netcfg.yaml     
     network:
      version: 2
@@ -11,14 +10,14 @@
          gateway4: 192.168.1.1
          nameservers:
              addresses: [8.8.8.8,8.8.8.4]
-  ## Then Try
+  ## Run
     sudo netplan try
     sudo netplan apply 
     Reboot the system if needed to apply changes
   # SSH configuration
   ## You can set several options in /etc/ssh/sshd_config. One is the listen address. If You set a listen address on your subnet. A private IP address is not routable over the internet.
     ListenAddress 192.168.0.10
-  ## You can use the AllowUsers
+  ## You can use the AllowUsers flag
     AllowUsers you@192.168.0.0/16
   ## You should change the port from the default
     Port 1234
@@ -69,18 +68,18 @@
     PUID=1000
     PGID=1000
     TZ="America/New_York"
-    USERDIR="/home/dumds"
+    USERDIR="/home/{userName}"
     DOCKERDIR="/home/{userName}/docker"
     DATADIR="/media/storage"
-    HOSTNAME="dumds"
+    HOSTNAME="{userName}"
 # Setup Folder Permissions
     sudo chmod 775 /home/{userName}/docker
 ## May need to set permissions with acl
     sudo apt install acl
-    sudo setfacl -Rdm u:{userName}:rwx /home/dumds/docker
-    sudo setfacl -Rm u:{userName}:rwx /home/dumds/docker
-    sudo setfacl -Rdm g:docker:rwx /home/dumds/docker
-    sudo setfacl -Rm g:docker:rwx /home/dumds/docker
+    sudo setfacl -Rdm u:{userName}:rwx /home/{userName}/docker
+    sudo setfacl -Rm u:{userName}:rwx /home/{userName}/docker
+    sudo setfacl -Rdm g:docker:rwx /home/{userName}/docker
+    sudo setfacl -Rm g:docker:rwx /home/{userName}/docker
   
 # Creating a Raid5 disk
     lsblk -o NAME,SIZE,FSTYPE,TYPE,MOUNTPOINT
@@ -103,11 +102,11 @@
 ## Check status for docker containers
     sudo docker ps -a
 ## Run Docker Compose to build the containers
-    sudo docker compose -f /home/bauldur/docker/docker-compose-dumds.yml up -d
+    sudo docker compose -f /home/{userName}/docker/docker-compose-dumds.yml up -d
 
 ## To Update Images Run
-    sudo docker compose -f /home/bauldur/docker/docker-compose-dumds.yml pull
-    sudo docker compose -f /home/bauldur/docker/docker-compose-dumds.yml down
-    sudo docker compose -f /home/bauldur/docker/docker-compose-dumds.yml up -d
+    sudo docker compose -f /home/{userName}/docker/docker-compose-dumds.yml pull
+    sudo docker compose -f /home/{userName}/docker/docker-compose-dumds.yml down
+    sudo docker compose -f /home/{userName}/docker/docker-compose-dumds.yml up -d
 ## Check Timezone
     ls -l /etc/localtime
